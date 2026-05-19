@@ -1,0 +1,77 @@
+#' Drop-down badge
+#'
+#' Drop-down button in a form of a badge with `bg-primary` as default style
+#' Clicking badge shows a drop-down containing any `HTML` element. Folded drop-down
+#' doesn't trigger display output which means that items rendered using `render*`
+#' will be recomputed only when drop-down is show.
+#'
+#' @param id (`character(1)`) shiny module's id
+#' @param label (`shiny.tag`) Label displayed on a badge.
+#' @param content (`shiny.tag`) Content of a drop-down.
+#' @return A `shiny.tag` object representing a drop-down badge component to display the options.
+#' @keywords internal
+badge_dropdown <- function(id, label, content) {
+  ns <- shiny::NS(id)
+  htmltools::tagList(
+    htmltools::singleton(htmltools::tags$head(
+      htmltools::includeCSS(system.file("badge-dropdown", "style.css", package = "teal.picks")),
+      htmltools::includeScript(system.file("badge-dropdown", "script.js", package = "teal.picks"))
+    )),
+    htmltools::tags$div(
+      class = "badge-dropdown-wrapper",
+      htmltools::tags$span(
+        id = ns("summary_badge"),
+        class = "badge bg-primary rounded-pill badge-dropdown",
+        style = "cursor: pointer;",
+        tags$span(class = "badge-dropdown-label", label),
+        tags$span(class = "badge-dropdown-icon", bsicons::bs_icon("caret-down-fill")),
+        onclick = sprintf("toggleBadgeDropdown('%s', '%s')", ns("summary_badge"), ns("inputs_container"))
+      ),
+      htmltools::tags$div(
+        content,
+        id = ns("inputs_container"),
+        style = htmltools::css(
+          visibility = "hidden",
+          width = "0",
+          position = "absolute",
+          background = "white",
+          border = "1px solid #ccc",
+          `border-radius` = "4px",
+          `box-shadow` = "0 2px 10px rgba(0,0,0,0.1)",
+          padding = "10px",
+          `z-index` = "1050", # z-index set to 1000+50 to ensure that is above encoding panel on 1 column layout.
+          `min-width` = "200px",
+          transition = "opacity 0.2s ease",
+          opacity = 0
+        )
+      )
+    )
+  )
+}
+
+#' Fixed badge
+#' @inheritParams badge_dropdown
+#' @return A `shiny.tag` object representing a fixed badge component to display the selected option.
+#' @keywords internal
+badge_fixed <- function(id, label, content) {
+  ns <- shiny::NS(id)
+
+  htmltools::tagList(
+    htmltools::singleton(htmltools::tags$head(
+      htmltools::includeCSS(system.file("badge-dropdown", "style.css", package = "teal.picks"))
+    )),
+    htmltools::tags$div(
+      htmltools::tags$span(
+        id = ns("fixed_badge"),
+        class = "fixed-picks badge-dropdown",
+        htmltools::tags$label(label),
+        htmltools::tags$i(bsicons::bs_icon("lock-fill"))
+      ),
+      htmltools::tags$div(
+        id = ns("inputs_container"),
+        content,
+        style = "visibility: hidden; width: 0; height: 0;"
+      )
+    )
+  )
+}

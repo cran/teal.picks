@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="NEST CoreDev" />
+
+<meta name="date" content="2026-05-14" />
+
+<title>Using teal.picks in a teal application</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Using teal.picks in a teal application</h1>
+<h4 class="author">NEST CoreDev</h4>
+<h4 class="date">2026-05-14</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#what-this-package-is-for" id="toc-what-this-package-is-for">What this package is for</a>
+<ul>
+<li><a href="#choose-a-dataset" id="toc-choose-a-dataset">Choose a
+dataset</a></li>
+<li><a href="#choose-dataset-and-columns" id="toc-choose-dataset-and-columns">Choose dataset and columns</a></li>
+<li><a href="#add-a-value-filter-levels-or-ranges" id="toc-add-a-value-filter-levels-or-ranges">Add a value filter (levels
+or ranges)</a></li>
+<li><a href="#define-choices-and-selections" id="toc-define-choices-and-selections">Define choices and
+selections</a></li>
+</ul></li>
+<li><a href="#trying-these-patterns-inside-teal" id="toc-trying-these-patterns-inside-teal">Trying these patterns inside
+teal</a></li>
+<li><a href="#writing-your-own-module" id="toc-writing-your-own-module">Writing your own module</a></li>
+<li><a href="#see-also" id="toc-see-also">See also</a></li>
+</ul>
+</div>
+
+<div id="what-this-package-is-for" class="section level2">
+<h2>What this package is for</h2>
+<p><code>teal.picks</code> helps you expose analysis choices in a
+<code>teal</code> Shiny app in a way that mimicks how people think about
+data: first <em>which dataset</em>, then <em>which columns</em>, and
+optionally <em>which values</em> to filter to. You set all those steps
+at once with <code>picks()</code>; the app renders the right controls
+and keeps selections consistent when upstream choices change.</p>
+<p>Typical workflow:</p>
+<ol style="list-style-type: decimal">
+<li>Prepare a <code>teal.data::teal_data()</code> object (when you
+relate multiple tables use <code>join_keys</code> so teal knows how they
+link).</li>
+<li>Define one or more <code>picks()</code> specs:
+<code>datasets()</code>, optionally <code>variables()</code>, optionally
+<code>values()</code> for filters or ranges.</li>
+<li>In your teal module, wire UI and server so those specs drive your
+tables, plots, or merged analysis data (see <a href="#writing-your-own-module">Writing your own module</a>).</li>
+</ol>
+<p>The examples below show the usual building blocks—not every app needs
+every level.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(teal)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(teal.data)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(teal.picks)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">teal_data</span>()</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">within</span>(data, {</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  ADSL <span class="ot">&lt;-</span> teal.data<span class="sc">::</span>rADSL</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  ADLB <span class="ot">&lt;-</span> teal.data<span class="sc">::</span>rADLB</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>})</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="fu">join_keys</span>(data) <span class="ot">&lt;-</span> teal.data<span class="sc">::</span>default_cdisc_join_keys[<span class="fu">c</span>(<span class="st">&quot;ADSL&quot;</span>, <span class="st">&quot;ADLB&quot;</span>)]</span></code></pre></div>
+<div id="choose-a-dataset" class="section level3">
+<h3>Choose a dataset</h3>
+<p>When the analysis can draw from more than one table, let the user
+pick the active source (here, demographics vs labs).</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>picks_datasets <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="at">source =</span> <span class="fu">picks</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>    <span class="fu">datasets</span>(</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>      <span class="at">choices =</span> <span class="fu">c</span>(<span class="st">&quot;ADSL&quot;</span>, <span class="st">&quot;ADLB&quot;</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>      <span class="at">selected =</span> <span class="st">&quot;ADLB&quot;</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>    )</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  )</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="choose-dataset-and-columns" class="section level3">
+<h3>Choose dataset and columns</h3>
+<p>Add <code>variables()</code> so, after a dataset is chosen, the user
+picks one or more columns. You can list names explicitly or use
+tidyselect-style expressions; see <code>?picks</code> for details.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>picks_datasets_variables <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="at">adsl_cols =</span> <span class="fu">picks</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    <span class="fu">datasets</span>(<span class="at">choices =</span> <span class="st">&quot;ADSL&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;ADSL&quot;</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    <span class="fu">variables</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>      <span class="at">choices =</span> <span class="fu">c</span>(<span class="st">&quot;USUBJID&quot;</span>, <span class="st">&quot;AGE&quot;</span>, <span class="st">&quot;SEX&quot;</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>      <span class="at">selected =</span> <span class="st">&quot;AGE&quot;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>      <span class="at">multiple =</span> <span class="cn">FALSE</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>    )</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  )</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="add-a-value-filter-levels-or-ranges" class="section level3">
+<h3>Add a value filter (levels or ranges)</h3>
+<p><code>values()</code> sits after <code>variables()</code>. It adapts
+to the column type—for example category levels for a
+<code>PARAM</code>-style variable, or a numeric or date range for
+continuous data.</p>
+<!-- # nolint start: object_length_linter. -->
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>picks_datasets_variables_values <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="at">labs =</span> <span class="fu">picks</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>    <span class="fu">datasets</span>(<span class="at">choices =</span> <span class="st">&quot;ADLB&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;ADLB&quot;</span>),</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>    <span class="fu">variables</span>(<span class="at">choices =</span> <span class="st">&quot;PARAM&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;PARAM&quot;</span>, <span class="at">multiple =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>    <span class="fu">values</span>(</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>      <span class="at">choices =</span> <span class="fu">c</span>(<span class="st">&quot;ALT&quot;</span>, <span class="st">&quot;AST&quot;</span>, <span class="st">&quot;CRP&quot;</span>, <span class="st">&quot;GLU&quot;</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>      <span class="at">selected =</span> <span class="fu">c</span>(<span class="st">&quot;ALT&quot;</span>, <span class="st">&quot;AST&quot;</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>      <span class="at">multiple =</span> <span class="cn">TRUE</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>    )</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  )</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>)</span></code></pre></div>
+<!-- # nolint end: object_length_linter. -->
+</div>
+<div id="define-choices-and-selections" class="section level3">
+<h3>Define choices and selections</h3>
+<p>Each <code>picks()</code> element has <code>choices</code> and
+<code>selected</code>. You can define them in four ways:</p>
+<table>
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Approach</th>
+<th>Works with</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Default behavior - no arguments needed for generic usage</td>
+<td><code>datasets()</code>, <code>variables()</code>,
+<code>values()</code></td>
+</tr>
+<tr class="even">
+<td>Static — character vector, integer index, or numeric range</td>
+<td><code>datasets()</code>, <code>variables()</code>,
+<code>values()</code></td>
+</tr>
+<tr class="odd">
+<td><code>tidyselect</code> helpers — <code>everything()</code>,
+<code>starts_with()</code>, <code>where()</code>, …</td>
+<td><code>datasets()</code>, <code>variables()</code> only</td>
+</tr>
+<tr class="even">
+<td>Function — an R function applied at runtime to the data</td>
+<td><code>datasets()</code>, <code>variables()</code>,
+<code>values()</code></td>
+</tr>
+</tbody>
+</table>
+<p>The sections below walk through each approach with runnable
+examples.</p>
+<div id="defaults" class="section level4">
+<h4>Defaults</h4>
+<p>Defaults depend on the slot type.</p>
+<ul>
+<li>For <code>datasets()</code>, the default <code>choices</code> are
+all available datasets. A <code>picks()</code> call needs a
+<code>datasets()</code> as first positional argument, except when
+<code>check_no_dataset = FALSE</code>.</li>
+<li>For <code>variables()</code>, the default <code>choices</code> is
+all variables in the selected dataset.</li>
+<li>For <code>values()</code>, the default <code>choices</code> is all
+values of the selected variable.</li>
+<li>For <code>selected</code>, the default is the first available
+choice, or all choices when <code>multiple = TRUE</code>.</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">picks</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">datasets</span>(<span class="at">choices =</span> <span class="st">&quot;ADSL&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;ADSL&quot;</span>),</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">variables</span>()</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code> [1m&lt;picks&gt;[0m
+   [1m&lt;datasets&gt;[0m:
+     choices: ADSL
+     selected: ADSL
+     [3mmultiple=FALSE, ordered=FALSE, fixed=TRUE[0m
+   [1m&lt;variables&gt;[0m:
+     choices: tidyselect::everything()
+     selected: 1L
+     [3mmultiple=FALSE, ordered=FALSE, fixed=FALSE, allow-clear=FALSE[0m</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">picks</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">datasets</span>(<span class="at">choices =</span> <span class="st">&quot;ADSL&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;ADSL&quot;</span>),</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">variables</span>(<span class="at">choices =</span> <span class="st">&quot;SEX&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;SEX&quot;</span>, <span class="at">multiple =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="fu">values</span>()</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code> [1m&lt;picks&gt;[0m
+   [1m&lt;datasets&gt;[0m:
+     choices: ADSL
+     selected: ADSL
+     [3mmultiple=FALSE, ordered=FALSE, fixed=TRUE[0m
+   [1m&lt;variables&gt;[0m:
+     choices: SEX
+     selected: SEX
+     [3mmultiple=FALSE, ordered=FALSE, fixed=TRUE, allow-clear=FALSE[0m
+   [1m&lt;values&gt;[0m:
+     choices: &lt;fn&gt;
+     selected: &lt;fn&gt;
+     [3mmultiple=TRUE, ordered=FALSE, fixed=FALSE[0m</code></pre>
+</div>
+<div id="static-choices" class="section level4">
+<h4>Static choices</h4>
+<p>Pass a character vector to <code>choices</code> to enumerate options
+exactly. Use <code>selected</code> to set the default. Integer indices
+work too (for example <code>selected = 1L</code> means the first element
+of <code>choices</code>).</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Datasets — user may switch between ADSL and ADLB; ADSL is the default</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>p_datasets <span class="ot">&lt;-</span> <span class="fu">picks</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="fu">datasets</span>(</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    <span class="at">choices  =</span> <span class="fu">c</span>(<span class="st">&quot;ADSL&quot;</span>, <span class="st">&quot;ADLB&quot;</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    <span class="at">selected =</span> <span class="st">&quot;ADSL&quot;</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  )</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>)</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co"># Variables — only a named subset is offered; first column pre-selected</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>p_variables <span class="ot">&lt;-</span> <span class="fu">picks</span>(</span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>  <span class="fu">datasets</span>(<span class="at">choices =</span> <span class="st">&quot;ADSL&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;ADSL&quot;</span>),</span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>  <span class="fu">variables</span>(</span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>    <span class="at">choices  =</span> <span class="fu">c</span>(<span class="st">&quot;AGE&quot;</span>, <span class="st">&quot;SEX&quot;</span>, <span class="st">&quot;ARM&quot;</span>),</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>    <span class="at">selected =</span> <span class="st">&quot;AGE&quot;</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>    <span class="at">multiple =</span> <span class="cn">FALSE</span></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>  )</span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>)</span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a><span class="co"># Values — categorical filter; two levels pre-selected</span></span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a>p_values <span class="ot">&lt;-</span> <span class="fu">picks</span>(</span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a>  <span class="fu">datasets</span>(<span class="at">choices =</span> <span class="st">&quot;ADSL&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;ADSL&quot;</span>),</span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a>  <span class="fu">variables</span>(<span class="at">choices =</span> <span class="st">&quot;SEX&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;SEX&quot;</span>, <span class="at">multiple =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a>  <span class="fu">values</span>(</span>
+<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a>    <span class="at">choices  =</span> <span class="fu">c</span>(<span class="st">&quot;M&quot;</span>, <span class="st">&quot;F&quot;</span>),</span>
+<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a>    <span class="at">selected =</span> <span class="st">&quot;F&quot;</span></span>
+<span id="cb9-26"><a href="#cb9-26" tabindex="-1"></a>  )</span>
+<span id="cb9-27"><a href="#cb9-27" tabindex="-1"></a>)</span>
+<span id="cb9-28"><a href="#cb9-28" tabindex="-1"></a></span>
+<span id="cb9-29"><a href="#cb9-29" tabindex="-1"></a>p_datasets</span></code></pre></div>
+<pre><code> [1m&lt;picks&gt;[0m
+   [1m&lt;datasets&gt;[0m:
+     choices: ADSL, ADLB
+     selected: ADSL
+     [3mmultiple=FALSE, ordered=FALSE, fixed=FALSE[0m</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>p_variables</span></code></pre></div>
+<pre><code> [1m&lt;picks&gt;[0m
+   [1m&lt;datasets&gt;[0m:
+     choices: ADSL
+     selected: ADSL
+     [3mmultiple=FALSE, ordered=FALSE, fixed=TRUE[0m
+   [1m&lt;variables&gt;[0m:
+     choices: AGE, SEX, ARM
+     selected: AGE
+     [3mmultiple=FALSE, ordered=FALSE, fixed=FALSE, allow-clear=FALSE[0m</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>p_values</span></code></pre></div>
+<pre><code> [1m&lt;picks&gt;[0m
+   [1m&lt;datasets&gt;[0m:
+     choices: ADSL
+     selected: ADSL
+     [3mmultiple=FALSE, ordered=FALSE, fixed=TRUE[0m
+   [1m&lt;variables&gt;[0m:
+     choices: SEX
+     selected: SEX
+     [3mmultiple=FALSE, ordered=FALSE, fixed=TRUE, allow-clear=FALSE[0m
+   [1m&lt;values&gt;[0m:
+     choices: M, F
+     selected: F
+     [3mmultiple=TRUE, ordered=FALSE, fixed=FALSE[0m</code></pre>
+</div>
+<div id="tidyselect-helpers" class="section level4">
+<h4><code>tidyselect</code> helpers</h4>
+<p><code>tidyselect</code> predicates let <code>choices</code> and
+<code>selected</code> adapt to the actual data at runtime instead of
+being hard-coded. This is supported for <code>datasets()</code> and
+<code>variables()</code>.</p>
+<p>Commonly used helpers:</p>
+<ul>
+<li><code>tidyselect::everything()</code> — all items</li>
+<li><code>tidyselect::starts_with()</code> /
+<code>tidyselect::ends_with()</code> /
+<code>tidyselect::contains()</code> — pattern matching</li>
+<li><code>tidyselect::matches()</code> — regex matching</li>
+<li><code>tidyselect::where(predicate)</code> — columns satisfying a
+predicate function</li>
+<li><code>tidyselect::all_of()</code> /
+<code>tidyselect::any_of()</code> — vector-based selection (error-safe
+or silent)</li>
+<li>Integer indices such as <code>1L</code>, <code>1L:3L</code> — select
+by position</li>
+</ul>
+<blockquote>
+<p>Note: <code>tidyselect</code> is not supported by
+<code>values()</code>. Use explicit vectors or a function there instead
+(see <a href="#functions">Functions</a>).</p>
+</blockquote>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># Datasets — offer any data.frame in the teal_data object</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>p_any_dataset <span class="ot">&lt;-</span> <span class="fu">picks</span>(</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="fu">datasets</span>(</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>    <span class="at">choices  =</span> tidyselect<span class="sc">::</span><span class="fu">where</span>(is.data.frame),</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>    <span class="at">selected =</span> <span class="dv">1</span><span class="dt">L</span> <span class="co"># first dataset by default</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>  )</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>)</span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co"># Variables — all numeric columns; first one pre-selected</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>p_numeric_vars <span class="ot">&lt;-</span> <span class="fu">picks</span>(</span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>  <span class="fu">datasets</span>(<span class="at">choices =</span> <span class="st">&quot;ADSL&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;ADSL&quot;</span>),</span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>  <span class="fu">variables</span>(</span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>    <span class="at">choices  =</span> tidyselect<span class="sc">::</span><span class="fu">where</span>(is.numeric),</span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>    <span class="at">selected =</span> <span class="dv">1</span><span class="dt">L</span>,</span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a>    <span class="at">multiple =</span> <span class="cn">FALSE</span></span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a>  )</span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a>)</span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="co"># Variables — columns whose names start with &quot;A&quot;; first two pre-selected</span></span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a>p_a_prefix <span class="ot">&lt;-</span> <span class="fu">picks</span>(</span>
+<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a>  <span class="fu">datasets</span>(<span class="at">choices =</span> <span class="st">&quot;ADSL&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;ADSL&quot;</span>),</span>
+<span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a>  <span class="fu">variables</span>(</span>
+<span id="cb15-23"><a href="#cb15-23" tabindex="-1"></a>    <span class="at">choices  =</span> tidyselect<span class="sc">::</span><span class="fu">starts_with</span>(<span class="st">&quot;A&quot;</span>),</span>
+<span id="cb15-24"><a href="#cb15-24" tabindex="-1"></a>    <span class="at">selected =</span> <span class="dv">1</span><span class="dt">L</span><span class="sc">:</span><span class="dv">2</span><span class="dt">L</span>,</span>
+<span id="cb15-25"><a href="#cb15-25" tabindex="-1"></a>    <span class="at">multiple =</span> <span class="cn">TRUE</span></span>
+<span id="cb15-26"><a href="#cb15-26" tabindex="-1"></a>  )</span>
+<span id="cb15-27"><a href="#cb15-27" tabindex="-1"></a>)</span>
+<span id="cb15-28"><a href="#cb15-28" tabindex="-1"></a></span>
+<span id="cb15-29"><a href="#cb15-29" tabindex="-1"></a>p_any_dataset</span></code></pre></div>
+<pre><code> [1m&lt;picks&gt;[0m
+   [1m&lt;datasets&gt;[0m:
+     choices: &lt;fn&gt;
+     selected: 1L
+     [3mmultiple=FALSE, ordered=FALSE, fixed=FALSE[0m</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>p_numeric_vars</span></code></pre></div>
+<pre><code> [1m&lt;picks&gt;[0m
+   [1m&lt;datasets&gt;[0m:
+     choices: ADSL
+     selected: ADSL
+     [3mmultiple=FALSE, ordered=FALSE, fixed=TRUE[0m
+   [1m&lt;variables&gt;[0m:
+     choices: &lt;fn&gt;
+     selected: 1L
+     [3mmultiple=FALSE, ordered=FALSE, fixed=FALSE, allow-clear=FALSE[0m</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>p_a_prefix</span></code></pre></div>
+<pre><code> [1m&lt;picks&gt;[0m
+   [1m&lt;datasets&gt;[0m:
+     choices: ADSL
+     selected: ADSL
+     [3mmultiple=FALSE, ordered=FALSE, fixed=TRUE[0m
+   [1m&lt;variables&gt;[0m:
+     choices: tidyselect::starts_with(&quot;A&quot;)
+     selected: &lt;int&gt;
+     [3mmultiple=TRUE, ordered=FALSE, fixed=FALSE, allow-clear=FALSE[0m</code></pre>
+</div>
+<div id="functions" class="section level4">
+<h4>Functions</h4>
+<p>You can pass a plain R function as <code>choices</code> or
+<code>selected</code>. The function receives the relevant context object
+(the current dataset for <code>datasets()</code> and
+<code>variables()</code>, the current column vector for
+<code>values()</code>) and must return the subset to use. This is the
+only runtime-dynamic approach supported by <code>values()</code>.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="co"># Variables — use the package helper is_categorical() as a column predicate.</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="co"># Without &quot;des-delayed&quot;, the resolver calls it via vapply(data, fn, logical(1)),</span></span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a><span class="co"># so it must accept one column and return a single logical value — which is_categorical() does.</span></span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="fu">picks</span>(</span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>  <span class="fu">datasets</span>(<span class="at">choices =</span> <span class="st">&quot;ADSL&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;ADSL&quot;</span>),</span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>  <span class="fu">variables</span>(</span>
+<span id="cb21-7"><a href="#cb21-7" tabindex="-1"></a>    <span class="at">choices  =</span> <span class="fu">is_categorical</span>(),</span>
+<span id="cb21-8"><a href="#cb21-8" tabindex="-1"></a>    <span class="at">selected =</span> <span class="dv">1</span><span class="dt">L</span>,</span>
+<span id="cb21-9"><a href="#cb21-9" tabindex="-1"></a>    <span class="at">multiple =</span> <span class="cn">TRUE</span></span>
+<span id="cb21-10"><a href="#cb21-10" tabindex="-1"></a>  )</span>
+<span id="cb21-11"><a href="#cb21-11" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code> [1m&lt;picks&gt;[0m
+   [1m&lt;datasets&gt;[0m:
+     choices: ADSL
+     selected: ADSL
+     [3mmultiple=FALSE, ordered=FALSE, fixed=TRUE[0m
+   [1m&lt;variables&gt;[0m:
+     choices: &lt;fn&gt;
+     selected: 1L
+     [3mmultiple=TRUE, ordered=FALSE, fixed=FALSE, allow-clear=FALSE[0m</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="co"># Values — select only even ages from the AGE column.</span></span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="co"># Functions passed to values() must carry the &quot;des-delayed&quot; class so the resolver</span></span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a><span class="co"># calls them with the column vector rather than treating them as a column predicate.</span></span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>even_vals <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">sort</span>(<span class="fu">unique</span>(x[x <span class="sc">%%</span> <span class="dv">2</span> <span class="sc">==</span> <span class="dv">0</span>]))</span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a><span class="fu">class</span>(even_vals) <span class="ot">&lt;-</span> <span class="fu">append</span>(<span class="fu">class</span>(even_vals), <span class="st">&quot;des-delayed&quot;</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a>p_even_ages <span class="ot">&lt;-</span> <span class="fu">picks</span>(</span>
+<span id="cb23-8"><a href="#cb23-8" tabindex="-1"></a>  <span class="fu">datasets</span>(<span class="at">choices =</span> <span class="st">&quot;ADSL&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;ADSL&quot;</span>),</span>
+<span id="cb23-9"><a href="#cb23-9" tabindex="-1"></a>  <span class="fu">variables</span>(<span class="at">choices =</span> <span class="st">&quot;AGE&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;AGE&quot;</span>, <span class="at">multiple =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb23-10"><a href="#cb23-10" tabindex="-1"></a>  <span class="fu">values</span>(</span>
+<span id="cb23-11"><a href="#cb23-11" tabindex="-1"></a>    <span class="at">choices  =</span> even_vals,</span>
+<span id="cb23-12"><a href="#cb23-12" tabindex="-1"></a>    <span class="at">selected =</span> even_vals</span>
+<span id="cb23-13"><a href="#cb23-13" tabindex="-1"></a>  )</span>
+<span id="cb23-14"><a href="#cb23-14" tabindex="-1"></a>)</span>
+<span id="cb23-15"><a href="#cb23-15" tabindex="-1"></a></span>
+<span id="cb23-16"><a href="#cb23-16" tabindex="-1"></a>p_even_ages</span></code></pre></div>
+<pre><code> [1m&lt;picks&gt;[0m
+   [1m&lt;datasets&gt;[0m:
+     choices: ADSL
+     selected: ADSL
+     [3mmultiple=FALSE, ordered=FALSE, fixed=TRUE[0m
+   [1m&lt;variables&gt;[0m:
+     choices: AGE
+     selected: AGE
+     [3mmultiple=FALSE, ordered=FALSE, fixed=TRUE, allow-clear=FALSE[0m
+   [1m&lt;values&gt;[0m:
+     choices: &lt;function&gt;
+     selected: &lt;function&gt;
+     [3mmultiple=TRUE, ordered=FALSE, fixed=FALSE[0m</code></pre>
+</div>
+<div id="use-of-multiple-to-select-more-than-one-columns-at-once" class="section level4">
+<h4>Use of multiple to select more than one columns at once</h4>
+<p>Use <code>multiple = TRUE</code> when analysts should pass more than
+one variable into the next step (for example stratifiers or outcomes
+together).</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>picks_multiple_variables <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>  <span class="at">demo =</span> <span class="fu">picks</span>(</span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>    <span class="fu">datasets</span>(<span class="at">choices =</span> <span class="st">&quot;ADSL&quot;</span>, <span class="at">selected =</span> <span class="st">&quot;ADSL&quot;</span>),</span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a>    <span class="fu">variables</span>(</span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a>      <span class="at">choices =</span> <span class="fu">c</span>(<span class="st">&quot;USUBJID&quot;</span>, <span class="st">&quot;AGE&quot;</span>, <span class="st">&quot;SEX&quot;</span>),</span>
+<span id="cb25-6"><a href="#cb25-6" tabindex="-1"></a>      <span class="at">selected =</span> <span class="fu">c</span>(<span class="st">&quot;AGE&quot;</span>, <span class="st">&quot;SEX&quot;</span>),</span>
+<span id="cb25-7"><a href="#cb25-7" tabindex="-1"></a>      <span class="at">multiple =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb25-8"><a href="#cb25-8" tabindex="-1"></a>      <span class="at">ordered =</span> <span class="cn">TRUE</span></span>
+<span id="cb25-9"><a href="#cb25-9" tabindex="-1"></a>    )</span>
+<span id="cb25-10"><a href="#cb25-10" tabindex="-1"></a>  )</span>
+<span id="cb25-11"><a href="#cb25-11" tabindex="-1"></a>)</span></code></pre></div>
+<p>See <code>?picks</code> for other arguments that affect how
+choices/selections are presented to users regardless of using static,
+tidyselect or functions to define them.</p>
+</div>
+<div id="choices-and-selection-summary" class="section level4">
+<h4>Choices and Selection Summary</h4>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">Static</th>
+<th align="center"><code>tidyselect</code></th>
+<th align="center">Function</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>datasets()</code></td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+</tr>
+<tr class="even">
+<td><code>variables()</code></td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+<td align="center">yes</td>
+</tr>
+<tr class="odd">
+<td><code>values()</code></td>
+<td align="center">yes</td>
+<td align="center"><strong>no</strong></td>
+<td align="center">yes</td>
+</tr>
+</tbody>
+</table>
+<p>Use <strong>static</strong> choices when the set of options is fixed
+and known at app-development time. Use
+<strong><code>tidyselect</code></strong> when you want the choices to
+adapt to the shape of the data without writing a custom function. Use
+<strong>functions</strong> when the logic is more involved, or when you
+need runtime behavior for <code>values()</code>.</p>
+</div>
+</div>
+</div>
+<div id="trying-these-patterns-inside-teal" class="section level2">
+<h2>Trying these patterns inside teal</h2>
+<p>You can paste the <code>picks</code> objects above into any module
+that consumes them. To quickly explore picks object(s) in teal apps, the
+package includes <code>tm_merge()</code>: a small example teal module
+that connects <code>picks</code> to a merged preview table. That is not
+required for normal use—it is simply a convenient host while you learn
+the <code>picks()</code> API.</p>
+<p>Run the next block to explore a teal app with different picks
+patterns</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>app <span class="ot">&lt;-</span> <span class="fu">init</span>(</span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a>  <span class="at">data =</span> data,</span>
+<span id="cb26-5"><a href="#cb26-5" tabindex="-1"></a>  <span class="at">modules =</span> <span class="fu">modules</span>(</span>
+<span id="cb26-6"><a href="#cb26-6" tabindex="-1"></a>    <span class="fu">modules</span>(</span>
+<span id="cb26-7"><a href="#cb26-7" tabindex="-1"></a>      <span class="at">label =</span> <span class="st">&quot;teal.picks patterns&quot;</span>,</span>
+<span id="cb26-8"><a href="#cb26-8" tabindex="-1"></a>      <span class="fu">tm_merge</span>(</span>
+<span id="cb26-9"><a href="#cb26-9" tabindex="-1"></a>        <span class="at">label =</span> <span class="st">&quot;1. Dataset choice&quot;</span>,</span>
+<span id="cb26-10"><a href="#cb26-10" tabindex="-1"></a>        <span class="at">picks =</span> picks_datasets</span>
+<span id="cb26-11"><a href="#cb26-11" tabindex="-1"></a>      ),</span>
+<span id="cb26-12"><a href="#cb26-12" tabindex="-1"></a>      <span class="fu">tm_merge</span>(</span>
+<span id="cb26-13"><a href="#cb26-13" tabindex="-1"></a>        <span class="at">label =</span> <span class="st">&quot;2. Dataset &amp; variables&quot;</span>,</span>
+<span id="cb26-14"><a href="#cb26-14" tabindex="-1"></a>        <span class="at">picks =</span> picks_datasets_variables</span>
+<span id="cb26-15"><a href="#cb26-15" tabindex="-1"></a>      ),</span>
+<span id="cb26-16"><a href="#cb26-16" tabindex="-1"></a>      <span class="fu">tm_merge</span>(</span>
+<span id="cb26-17"><a href="#cb26-17" tabindex="-1"></a>        <span class="at">label =</span> <span class="st">&quot;3. Dataset, variables &amp; values&quot;</span>,</span>
+<span id="cb26-18"><a href="#cb26-18" tabindex="-1"></a>        <span class="at">picks =</span> picks_datasets_variables_values</span>
+<span id="cb26-19"><a href="#cb26-19" tabindex="-1"></a>      ),</span>
+<span id="cb26-20"><a href="#cb26-20" tabindex="-1"></a>      <span class="fu">tm_merge</span>(</span>
+<span id="cb26-21"><a href="#cb26-21" tabindex="-1"></a>        <span class="at">label =</span> <span class="st">&quot;4. Multiple variables&quot;</span>,</span>
+<span id="cb26-22"><a href="#cb26-22" tabindex="-1"></a>        <span class="at">picks =</span> picks_multiple_variables</span>
+<span id="cb26-23"><a href="#cb26-23" tabindex="-1"></a>      )</span>
+<span id="cb26-24"><a href="#cb26-24" tabindex="-1"></a>    )</span>
+<span id="cb26-25"><a href="#cb26-25" tabindex="-1"></a>  )</span>
+<span id="cb26-26"><a href="#cb26-26" tabindex="-1"></a>)</span>
+<span id="cb26-27"><a href="#cb26-27" tabindex="-1"></a></span>
+<span id="cb26-28"><a href="#cb26-28" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">interactive</span>()) {</span>
+<span id="cb26-29"><a href="#cb26-29" tabindex="-1"></a>  <span class="fu">shinyApp</span>(app<span class="sc">$</span>ui, app<span class="sc">$</span>server)</span>
+<span id="cb26-30"><a href="#cb26-30" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="writing-your-own-module" class="section level2">
+<h2>Writing your own module</h2>
+<p>In real apps you usually integrate <code>picks</code> with your own
+<code>teal::module()</code>. Two functions do the wiring:</p>
+<ul>
+<li><code>picks_ui()</code> — place the selector controls in your picks
+object in your module UI</li>
+<li><code>picks_srv()</code> — in the module server, pass
+<code>data</code> as a reactive <code>teal_data</code> object; it
+returns the resolved picks (what the user chose, after any dynamic
+choices are applied).</li>
+</ul>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>tm_picks_preview <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">label =</span> <span class="st">&quot;Custom picks module&quot;</span>, picks) {</span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>  teal<span class="sc">::</span><span class="fu">module</span>(</span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>    <span class="at">label =</span> label,</span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>    <span class="at">ui =</span> <span class="cf">function</span>(id, picks) {</span>
+<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a>      ns <span class="ot">&lt;-</span> shiny<span class="sc">::</span><span class="fu">NS</span>(id)</span>
+<span id="cb27-6"><a href="#cb27-6" tabindex="-1"></a>      shiny<span class="sc">::</span><span class="fu">tagList</span>(</span>
+<span id="cb27-7"><a href="#cb27-7" tabindex="-1"></a>        teal.picks<span class="sc">::</span><span class="fu">picks_ui</span>(<span class="fu">ns</span>(<span class="st">&quot;sel&quot;</span>), <span class="at">picks =</span> picks),</span>
+<span id="cb27-8"><a href="#cb27-8" tabindex="-1"></a>        shiny<span class="sc">::</span>tags<span class="sc">$</span><span class="fu">h5</span>(<span class="st">&quot;Preview (first rows)&quot;</span>),</span>
+<span id="cb27-9"><a href="#cb27-9" tabindex="-1"></a>        shiny<span class="sc">::</span><span class="fu">tableOutput</span>(<span class="fu">ns</span>(<span class="st">&quot;preview&quot;</span>)),</span>
+<span id="cb27-10"><a href="#cb27-10" tabindex="-1"></a>        shiny<span class="sc">::</span>tags<span class="sc">$</span><span class="fu">h5</span>(<span class="st">&quot;Resolved picks&quot;</span>),</span>
+<span id="cb27-11"><a href="#cb27-11" tabindex="-1"></a>        shiny<span class="sc">::</span><span class="fu">verbatimTextOutput</span>(<span class="fu">ns</span>(<span class="st">&quot;resolved&quot;</span>))</span>
+<span id="cb27-12"><a href="#cb27-12" tabindex="-1"></a>      )</span>
+<span id="cb27-13"><a href="#cb27-13" tabindex="-1"></a>    },</span>
+<span id="cb27-14"><a href="#cb27-14" tabindex="-1"></a>    <span class="at">server =</span> <span class="cf">function</span>(id, data, picks) {</span>
+<span id="cb27-15"><a href="#cb27-15" tabindex="-1"></a>      shiny<span class="sc">::</span><span class="fu">moduleServer</span>(id, <span class="cf">function</span>(input, output, session) {</span>
+<span id="cb27-16"><a href="#cb27-16" tabindex="-1"></a>        resolved <span class="ot">&lt;-</span> teal.picks<span class="sc">::</span><span class="fu">picks_srv</span>(<span class="st">&quot;sel&quot;</span>, <span class="at">picks =</span> picks, <span class="at">data =</span> data)</span>
+<span id="cb27-17"><a href="#cb27-17" tabindex="-1"></a>        preview_tbl <span class="ot">&lt;-</span> shiny<span class="sc">::</span><span class="fu">reactive</span>({</span>
+<span id="cb27-18"><a href="#cb27-18" tabindex="-1"></a>          shiny<span class="sc">::</span><span class="fu">req</span>(<span class="fu">data</span>(), <span class="fu">resolved</span>())</span>
+<span id="cb27-19"><a href="#cb27-19" tabindex="-1"></a>          ds <span class="ot">&lt;-</span> <span class="fu">resolved</span>()<span class="sc">$</span>datasets<span class="sc">$</span>selected</span>
+<span id="cb27-20"><a href="#cb27-20" tabindex="-1"></a>          vars <span class="ot">&lt;-</span> <span class="fu">resolved</span>()<span class="sc">$</span>variables<span class="sc">$</span>selected</span>
+<span id="cb27-21"><a href="#cb27-21" tabindex="-1"></a>          shiny<span class="sc">::</span><span class="fu">req</span>(<span class="fu">length</span>(ds) <span class="sc">==</span> <span class="dv">1</span><span class="dt">L</span>, <span class="fu">length</span>(vars) <span class="sc">&gt;=</span> <span class="dv">1</span><span class="dt">L</span>)</span>
+<span id="cb27-22"><a href="#cb27-22" tabindex="-1"></a>          <span class="fu">data</span>()[[ds]][, vars, drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb27-23"><a href="#cb27-23" tabindex="-1"></a>        })</span>
+<span id="cb27-24"><a href="#cb27-24" tabindex="-1"></a>        output<span class="sc">$</span>preview <span class="ot">&lt;-</span> shiny<span class="sc">::</span><span class="fu">renderTable</span>({</span>
+<span id="cb27-25"><a href="#cb27-25" tabindex="-1"></a>          utils<span class="sc">::</span><span class="fu">head</span>(<span class="fu">preview_tbl</span>(), <span class="dv">8</span><span class="dt">L</span>)</span>
+<span id="cb27-26"><a href="#cb27-26" tabindex="-1"></a>        })</span>
+<span id="cb27-27"><a href="#cb27-27" tabindex="-1"></a>        output<span class="sc">$</span>resolved <span class="ot">&lt;-</span> shiny<span class="sc">::</span><span class="fu">renderPrint</span>({</span>
+<span id="cb27-28"><a href="#cb27-28" tabindex="-1"></a>          shiny<span class="sc">::</span><span class="fu">req</span>(<span class="fu">resolved</span>())</span>
+<span id="cb27-29"><a href="#cb27-29" tabindex="-1"></a>          <span class="fu">str</span>(<span class="fu">resolved</span>(), <span class="at">max.level =</span> <span class="dv">2</span><span class="dt">L</span>, <span class="at">give.attr =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb27-30"><a href="#cb27-30" tabindex="-1"></a>        })</span>
+<span id="cb27-31"><a href="#cb27-31" tabindex="-1"></a>      })</span>
+<span id="cb27-32"><a href="#cb27-32" tabindex="-1"></a>    },</span>
+<span id="cb27-33"><a href="#cb27-33" tabindex="-1"></a>    <span class="at">ui_args =</span> <span class="fu">list</span>(<span class="at">picks =</span> picks),</span>
+<span id="cb27-34"><a href="#cb27-34" tabindex="-1"></a>    <span class="at">server_args =</span> <span class="fu">list</span>(<span class="at">picks =</span> picks),</span>
+<span id="cb27-35"><a href="#cb27-35" tabindex="-1"></a>    <span class="at">datanames =</span> <span class="st">&quot;ADSL&quot;</span></span>
+<span id="cb27-36"><a href="#cb27-36" tabindex="-1"></a>  )</span>
+<span id="cb27-37"><a href="#cb27-37" tabindex="-1"></a>}</span>
+<span id="cb27-38"><a href="#cb27-38" tabindex="-1"></a></span>
+<span id="cb27-39"><a href="#cb27-39" tabindex="-1"></a>app <span class="ot">&lt;-</span> <span class="fu">init</span>(</span>
+<span id="cb27-40"><a href="#cb27-40" tabindex="-1"></a>  <span class="at">data =</span> data,</span>
+<span id="cb27-41"><a href="#cb27-41" tabindex="-1"></a>  <span class="at">modules =</span> <span class="fu">modules</span>(</span>
+<span id="cb27-42"><a href="#cb27-42" tabindex="-1"></a>    <span class="fu">tm_picks_preview</span>(</span>
+<span id="cb27-43"><a href="#cb27-43" tabindex="-1"></a>      <span class="at">label =</span> <span class="st">&quot;Custom picks module&quot;</span>,</span>
+<span id="cb27-44"><a href="#cb27-44" tabindex="-1"></a>      <span class="at">picks =</span> picks_datasets_variables<span class="sc">$</span>adsl_cols</span>
+<span id="cb27-45"><a href="#cb27-45" tabindex="-1"></a>    )</span>
+<span id="cb27-46"><a href="#cb27-46" tabindex="-1"></a>  )</span>
+<span id="cb27-47"><a href="#cb27-47" tabindex="-1"></a>)</span>
+<span id="cb27-48"><a href="#cb27-48" tabindex="-1"></a></span>
+<span id="cb27-49"><a href="#cb27-49" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">interactive</span>()) {</span>
+<span id="cb27-50"><a href="#cb27-50" tabindex="-1"></a>  <span class="fu">shinyApp</span>(app<span class="sc">$</span>ui, app<span class="sc">$</span>server)</span>
+<span id="cb27-51"><a href="#cb27-51" tabindex="-1"></a>}</span></code></pre></div>
+<p>See <code>?picks_ui</code> and <code>?picks_srv</code> for container
+options and multiple named selectors.</p>
+</div>
+<div id="see-also" class="section level2">
+<h2>See also</h2>
+<ul>
+<li><code>?picks</code> — full <code>datasets()</code> /
+<code>variables()</code> / <code>values()</code> reference.</li>
+<li><code>vignette(&quot;teal-picks-standalone-shiny&quot;, package = &quot;teal.picks&quot;)</code>
+— <code>picks_ui()</code> / <code>picks_srv()</code> in plain Shiny (no
+<code>init()</code>).</li>
+<li><code>teal</code> documentation for <code>init()</code>,
+<code>modules()</code>, and <code>teal::module()</code>.</li>
+</ul>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
