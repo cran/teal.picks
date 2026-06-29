@@ -2,10 +2,10 @@ Type: Package
 Package: teal.picks
 Title: Dataset and Variable Picker and Merge Module for 'teal'
         Applications
-Version: 0.1.0
-Date: 2026-05-07
+Version: 0.2.0
+Date: 2026-06-26
 Authors@R: c(
-    person("Dawid", "Kaledkowski", , "dawid.kaledkowski@roche.com", role = c("aut", "cre"),
+    person("Dawid", "Kaledkowski", , "dawid.kaledkowski@roche.com", role = "aut",
            comment = c(ORCID = "0000-0001-9533-457X")),
     person("Andre", "Verissimo", , "andre.verissimo@roche.com", role = "aut",
            comment = c(ORCID = "0000-0002-2212-339X")),
@@ -14,7 +14,7 @@ Authors@R: c(
            comment = c(ORCID = "0000-0001-9747-2570")),
     person("Oriol", "Senan", , "oriol.senan@external.roche.com", role = "aut",
            comment = c(ORCID = "0000-0002-9621-3371")),
-    person("Dony", "Unardi", , "unardid@gene.com", role = "rev"),
+    person("Dony", "Unardi", , "unardid@gene.com", role = c("rev", "cre")),
     person("F. Hoffmann-La Roche AG", role = c("cph", "fnd"))
   )
 Description: Allows users to interactively select datasets, variables, and
@@ -38,16 +38,16 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
 NeedsCompilation: no
-Packaged: 2026-05-14 20:49:46 UTC; unardid
-Author: Dawid Kaledkowski [aut, cre] (ORCID:
+Packaged: 2026-06-27 11:53:01 UTC; unardid
+Author: Dawid Kaledkowski [aut] (ORCID:
     <https://orcid.org/0000-0001-9533-457X>),
   Andre Verissimo [aut] (ORCID: <https://orcid.org/0000-0002-2212-339X>),
   Marcin Kosinski [aut],
   Lluís Revilla Sancho [aut] (ORCID:
     <https://orcid.org/0000-0001-9747-2570>),
   Oriol Senan [aut] (ORCID: <https://orcid.org/0000-0002-9621-3371>),
-  Dony Unardi [rev],
+  Dony Unardi [rev, cre],
   F. Hoffmann-La Roche AG [cph, fnd]
-Maintainer: Dawid Kaledkowski <dawid.kaledkowski@roche.com>
+Maintainer: Dony Unardi <unardid@gene.com>
 Repository: CRAN
-Date/Publication: 2026-05-19 09:10:02 UTC
+Date/Publication: 2026-06-29 07:20:12 UTC
