@@ -2,8 +2,8 @@ Type: Package
 Package: teal.picks
 Title: Dataset and Variable Picker and Merge Module for 'teal'
         Applications
-Version: 0.2.0
-Date: 2026-06-26
+Version: 0.3.0
+Date: 2026-07-30
 Authors@R: c(
     person("Dawid", "Kaledkowski", , "dawid.kaledkowski@roche.com", role = "aut",
            comment = c(ORCID = "0000-0001-9533-457X")),
@@ -38,7 +38,7 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
 NeedsCompilation: no
-Packaged: 2026-06-27 11:53:01 UTC; unardid
+Packaged: 2026-07-30 17:47:41 UTC; unardid
 Author: Dawid Kaledkowski [aut] (ORCID:
     <https://orcid.org/0000-0001-9533-457X>),
   Andre Verissimo [aut] (ORCID: <https://orcid.org/0000-0002-2212-339X>),
@@ -50,4 +50,4 @@ Author: Dawid Kaledkowski [aut] (ORCID:
   F. Hoffmann-La Roche AG [cph, fnd]
 Maintainer: Dony Unardi <unardid@gene.com>
 Repository: CRAN
-Date/Publication: 2026-06-29 07:20:12 UTC
+Date/Publication: 2026-07-30 18:50:02 UTC
