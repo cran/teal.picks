@@ -266,7 +266,9 @@ datasets <- function(choices = tidyselect::everything(),
   )
 
   if (is.null(fixed)) {
-    fixed <- !.is_tidyselect(choices) && !.is_predicate(choices) && length(choices) == 1
+    fixed <- !.is_tidyselect(choices) && !.is_predicate(choices) &&
+      length(choices) == 1L && length(selected) == 1L &&
+      (all(selected == 1) || identical(unname(choices), unname(selected)))
   }
 
   out <- .pick(
@@ -303,11 +305,9 @@ variables <- function(choices = tidyselect::everything(),
   checkmate::assert_flag(multiple, null.ok = TRUE)
   checkmate::assert_flag(fixed, null.ok = TRUE)
   checkmate::assert_flag(ordered)
+
   if (is.null(multiple)) {
-    multiple <- !(.is_tidyselect(selected) || .is_predicate(selected)) && length(selected) > 1
-  }
-  if (is.null(fixed)) {
-    fixed <- !(.is_tidyselect(choices) || .is_predicate(choices)) && length(choices) == 1
+    multiple <- !(.is_tidyselect(selected) || .is_predicate(selected)) && length(selected) > 1L
   }
 
   # allow-clear is an option available from bootstrap-select v1.14.0-beta3 and upwards that is used by shinywidgets
@@ -316,6 +316,13 @@ variables <- function(choices = tidyselect::everything(),
   dots <- rlang::dots_list(...)
   if (!any(names(dots) == "allow-clear")) {
     dots <- c(dots, `allow-clear` = allow_clear)
+  }
+
+  if (is.null(fixed)) {
+    fixed <- !(.is_tidyselect(choices) || .is_predicate(choices)) &&
+      !isTRUE(dots[["allow-clear"]]) &&
+      length(choices) == 1L && length(selected) == 1L &&
+      (all(selected == 1) || identical(unname(choices), unname(selected)))
   }
 
   out <- do.call(
@@ -378,7 +385,8 @@ values <- function(choices = function(x) !is.na(x),
   checkmate::assert_flag(fixed, null.ok = TRUE)
 
   if (is.null(fixed)) {
-    fixed <- !.is_predicate(choices) && length(choices) == 1
+    fixed <- !.is_predicate(choices) && length(choices) == 1 &&
+      (missing(selected) || identical(unname(choices), unname(selected)))
   }
 
   out <- .pick(
@@ -405,22 +413,6 @@ values <- function(choices = function(x) !is.na(x),
                   ordered = FALSE,
                   fixed = FALSE,
                   ...) {
-  is_choices_delayed <- rlang::is_quosure(choices) || .is_predicate(choices)
-  is_selected_eager <- is.character(selected)
-  if (is_choices_delayed && is_selected_eager) {
-    warning(
-      warningCondition(
-        paste0(
-          deparse1(sys.call(-2)),
-          "\n - Setting explicit `selected` while `choices` are delayed (set using `tidyselect`) doesn't ",
-          "guarantee that `selected` is a subset of `choices`."
-        ),
-        class = c("pick_delayed", "picks_delayed"),
-        call = FALSE
-      )
-    )
-  }
-
   if (is.character(choices) && is.character(selected) && any(!selected %in% choices)) {
     not_in_choices <- setdiff(selected, choices)
     stop(
@@ -540,7 +532,7 @@ values <- function(choices = function(x) !is.na(x),
           "It is not guaranteed that explicitly defined choices will be a ",
           "subset of data selected in a previous element."
         ),
-        call = FALSE,
+        call = sys.call(-1),
         class = "picks_delayed"
       )
     )
